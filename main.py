@@ -8,9 +8,12 @@ import os
 import pyrogram
 import asyncio
 import time
+import json
+import requests
 from countryinfo import CountryInfo
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telethon import TelegramClient, events
 
 
 Bot = Client(

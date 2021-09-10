@@ -97,6 +97,12 @@ async def cb_data(bot, update):
         )
     else:
         await update.message.delete()
+        
+@Bot.on_message(filters.private & filters.command(["corona"]))
+async def corona(event):
+    await event.respond(staa(),parse_mode='html')
+    raise events.StopPropagation
+    )
 
 
 @Bot.on_message(filters.private & filters.command(["start"]))
@@ -107,43 +113,53 @@ async def start(bot, update):
         reply_markup=START_BUTTONS
     )
 
+def staa():
+    r = requests.get('https://hpb.health.gov.lk/api/get-current-statistical')
+    jsondata = json.loads(r.text)
+    update_date_time    = str(jsondata['data']['update_date_time'])
+    local_new_cases     = str(jsondata['data']['local_new_cases'])
+    local_active_cases  = str(jsondata['data']['local_active_cases'])
+    local_total_cases   = str(jsondata['data']['local_total_cases'])
+    local_deaths        = str(jsondata['data']['local_deaths'])
+    local_recovered     = str(jsondata['data']['local_recovered'])
+    local_total_number_of_individuals_in_hospitals = str(jsondata['data']['local_total_number_of_individuals_in_hospitals'])
+    global_new_cases    = str(jsondata['data']['global_new_cases'])
+    global_total_cases  = str(jsondata['data']['global_total_cases'])
+    global_deaths       = str(jsondata['data']['global_deaths'])
+    global_new_deaths   = str(jsondata['data']['global_deaths'])
+    global_recovered    = str(jsondata['data']['global_recovered'])
 
-@Bot.on_message(filters.private & filters.text)
-async def countryinfo(bot, update):
-    country = CountryInfo(update.text)
-    info = f"""**Country Information**
+    textt = str(
+                    '<b>CURRENT SITUATION</b>' + '\n' + '\n' + '<b>' +
+                    update_date_time + ' now </b>' + '\n' + '\n' +
+                    '<b>🇱🇰 Situation in Sri Lanka</b>' + '\n' + '\n'  +
+                    '🤒 Number of confirmed patients (cumulative) = ' + '<code>' +
+                    local_total_cases + '</code>' + '\n' +
+                    '🤕 Number of patients receiving treatment = ' + '<code>' + local_active_cases + '</code>' +
+                    '\n' + '😷 Number of new patients = ' + '<code>' + local_new_cases + '</code>' +
+                    '\n' +
+                    '🏥 Persons currently under investigation in hospitals = ' + '<code>' +
+                    local_total_number_of_individuals_in_hospitals +  '</code>' + '\n' +
+                    '🙂 The number of people who have recovered and left = ' + '<code>' + local_recovered + '</code>' + 
+                    '\n' + '⚰ Number of deaths = ' + '<code>'  + local_deaths + '</code>' + '\n' +
+                    '\n' + '<b>🌎 Worldwide status</b>' + '\n' +
+                    '\n' + '🤒 Number of confirmed patients (cumulative) = ' '<code>'  +
+                    global_total_cases + '</code>' + '\n' + '😷 Number of new patients = ' '<code>'  +
+                    global_new_cases + '</code>' + '\n' + '⚰ Number of deaths = ' '<code>'  +
+                    global_deaths + '</code>' + '\n' + '🙂 Healed number = ' '<code>'  +
+                    global_recovered + '</code>' + '\n' + '\n' + '\n' +
+                    '✅ All information is provided by the government and reputable sources' + '\n' +
+                    '~ @sl_bot_zone 🇱🇰 ~')
+    return textt
 
-Name : `{country.name()}`
-Native Name : `{country.native_name()}`
-Capital : `{country.capital()}`
-Population : `{country.population()}`
-Region : `{country.region()}`
-Sub Region : `{country.subregion()}`
-Top Level Domains : `{country.tld()}`
-Calling Codes : `{country.calling_codes()}`
-Currencies : `{country.currencies()}`
-Residence : `{country.demonym()}`
-Timezone : `{country.timezones()}`"""
-    country_name = country.name()
-    country_name = country_name.replace(" ", "+")
-    reply_markup=InlineKeyboardMarkup(
-        [[
-        InlineKeyboardButton('Wikipedia', url=f'{country.wiki()}'),
-        InlineKeyboardButton('Google', url=f'https://www.google.com/search?q={country_name}')
-        ],[
-        InlineKeyboardButton('Channel', url='https://telegram.me/FayasNoushad'),
-        InlineKeyboardButton('Feedback', url='https://telegram.me/TheFayas')
+@bot.on(events.NewMessage(pattern='/corona'))
+async def corona(event):
+    await event.respond(staa(),parse_mode='html')
+    raise events.StopPropagation
 
-        ]]
-    )
-    try:
-        await update.reply_text(
-            text=info,
-            reply_markup=reply_markup,
-            disable_web_page_preview=True
-        )
-    except Exception as error:
-        print(error)
-
+@bot.on(events.NewMessage(pattern='/corona {variabla}'))
+async def corona(event):
+    await event.respond(sta(),parse_mode='MARKDOWN')
+    raise events.StopPropagation
 
 Bot.run()

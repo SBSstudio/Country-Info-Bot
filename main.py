@@ -105,7 +105,7 @@ async def cb_data(bot, update):
 async def corona(event):
     await event.respond(staa(),parse_mode='html')
     raise events.StopPropagation
-    )
+    
 
 
 @Bot.on_message(filters.private & filters.command(["start"]))
@@ -158,11 +158,6 @@ def staa():
 @bot.on(events.NewMessage(pattern='/corona'))
 async def corona(event):
     await event.respond(staa(),parse_mode='html')
-    raise events.StopPropagation
-
-@bot.on(events.NewMessage(pattern='/corona {variabla}'))
-async def corona(event):
-    await event.respond(sta(),parse_mode='MARKDOWN')
     raise events.StopPropagation
 
 Bot.run()
